@@ -77,8 +77,6 @@ class QuickUnionFindStructure(n: Int) {
     while (x != id(x)) {
       x = id(x)
     }
-    //improvement
-    id(i) = x
     x
   }
 
