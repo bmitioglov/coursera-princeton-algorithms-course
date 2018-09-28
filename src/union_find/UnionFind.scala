@@ -3,7 +3,7 @@ package union_find
 /**
   * Created by Boris Mitioglov on 27/09/2018.
   */
-object UnionFind {
+object UnionFindCLient {
   def main(args: Array[String]): Unit = {
     val weightedQuickUnionFindStructure = new WeightedQuickUnionFindStructure(6)
     weightedQuickUnionFindStructure.union(0, 1)
@@ -14,6 +14,7 @@ object UnionFind {
     weightedQuickUnionFindStructure.printIndices()
     weightedQuickUnionFindStructure.printObjectArray()
     weightedQuickUnionFindStructure.printSizeArray()
+    println("Max elem in group = " + weightedQuickUnionFindStructure.findMaxElem(0))
     println(weightedQuickUnionFindStructure.isAllConnected)
     println(weightedQuickUnionFindStructure.connected(4, 0))
 
@@ -22,9 +23,11 @@ object UnionFind {
 
 class WeightedQuickUnionFindStructure(n: Int) extends QuickUnionFindStructure(n){
   private val sizeArray: Array[Int] = Array.ofDim[Int](n)
+  private val maxArray: Array[Int] = Array.ofDim[Int](n)
 
   for (i <- 0 until n) {
     sizeArray(i) = 1
+    maxArray(i) = i
   }
 
   override def union(p: Int, q: Int): Unit = {
@@ -35,9 +38,11 @@ class WeightedQuickUnionFindStructure(n: Int) extends QuickUnionFindStructure(n)
     if (sizeArray(j) >= sizeArray(i)) {
       sizeArray(j) = unitedTreeSize
       id(i) = j
+      if (p > maxArray(j)) maxArray(j) = p
     } else {
       sizeArray(i) = unitedTreeSize
       id(j) = i
+      if (q > maxArray(i)) maxArray(i) = q
     }
   }
 
@@ -59,6 +64,18 @@ class WeightedQuickUnionFindStructure(n: Int) extends QuickUnionFindStructure(n)
       print(sizeArray(i) + " ")
     }
     println()
+  }
+
+  def printMaxArray(): Unit = {
+    print ("Max Array:\t\t ")
+    for (i <- maxArray.indices) {
+      print(maxArray(i) + " ")
+    }
+    println()
+  }
+
+  def findMaxElem(i: Int): Int = {
+    maxArray(root(i))
   }
 
 }
