@@ -26,7 +26,7 @@ public class Percolation {
     }// create n-by-n grid, with all sites blocked
 
     public void open(int row, int col) {
-        if (!checkIndex(row) || !checkIndex(col)) {
+        if (wrongIndex(row) || wrongIndex(col)) {
             throw new IllegalArgumentException("Wrong col, row index");
         }
         if (openclosedarray[getIndex(row, col)] != 1) {
@@ -51,17 +51,19 @@ public class Percolation {
         if (row != 1 && isOpen(row - 1, col))
             weightedQuickUnionUF.union(getIndex(row, col), getIndex(row - 1, col));
         if (row == 1)
+            //connecting with upper extra vertex
             weightedQuickUnionUF.union(getIndex(row, col), 0);
     }
     private void unionDownNeighbor(int row, int col) {
         if (row != n && isOpen(row + 1, col))
             weightedQuickUnionUF.union(getIndex(row, col), getIndex(row + 1, col));
         if (row == n)
+            //connecting with bottom extra vertex
             weightedQuickUnionUF.union(getIndex(row, col), n * n + 1);
     }
 
-    private boolean checkIndex(int value) {
-        return value >= 1 && value <= n;
+    private boolean wrongIndex(int value) {
+        return value < 1 || value > n;
     }
 
     private int getIndex(int row, int col) {
@@ -81,6 +83,7 @@ public class Percolation {
     }      // number of open sites
 
     public boolean percolates() {
+        // checking connection between upper and bottom extra vertexes
         return weightedQuickUnionUF.connected(0, n * n + 1);
     }              // does the system percolate?
 
