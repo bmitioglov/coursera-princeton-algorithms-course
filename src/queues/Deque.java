@@ -65,7 +65,7 @@ public class Deque<Item> implements Iterable<Item> {
             tail.next = null;
         }
         size--;
-        return tail.value;
+        return valueForReturn;
     }                 // remove and return the item from the end
     public Iterator<Item> iterator() {
         return new Iterator<Item>() {
@@ -73,13 +73,15 @@ public class Deque<Item> implements Iterable<Item> {
 
             @Override
             public boolean hasNext() {
-                return currentElement.next != null;
+                return currentElement != null;
             }
 
             @Override
             public Item next() {
-                if (!hasNext()) throw new NoSuchElementException("no more items to return");
-                return currentElement.next.value;
+                if (currentElement == null) throw new NoSuchElementException("no more items to return");
+                Item value = currentElement.value;
+                currentElement = currentElement.next;
+                return value;
             }
         };
     }         // return an iterator over items in order from front to end
@@ -90,6 +92,7 @@ public class Deque<Item> implements Iterable<Item> {
         deque.addFirst(1);
         deque.addFirst(2);
         deque.addFirst(3);
+        deque.removeFirst();
 
         for (Integer value: deque) {
             System.out.println(value);
