@@ -4,7 +4,6 @@ import edu.princeton.cs.algs4.StdRandom;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import java.util.Stack;
 
 /**
  * Created by Boris Mitioglov on 23/10/2018.
@@ -30,6 +29,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
     }                   // return the number of items on the randomized queue
 
     public void enqueue(Item item) {
+        if (item == null) throw new IllegalArgumentException("item is null");
         if (array.length == numberOfItems) {
             resize(array.length * 2);
         }
@@ -80,6 +80,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
 
             @Override
             public Item next() {
+                if (!hasNext()) throw new NoSuchElementException("queue is empty");
                 Item nextVal = array[randomIndices[currentIndex]];
                 currentIndex++;
                 return nextVal;
