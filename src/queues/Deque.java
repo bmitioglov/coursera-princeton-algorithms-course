@@ -101,12 +101,14 @@ public class Deque<Item> implements Iterable<Item> {
 
     private class Node {
 
+        private final Item value;
+        private Node next;
+        private Node prev;
+
         Node(Item value) {
             this.value = value;
         }
 
-        private Item value;
-        private Node next;
-        private Node prev;
+
     }
 }

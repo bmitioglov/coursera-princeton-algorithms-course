@@ -8,12 +8,11 @@ import java.util.NoSuchElementException;
 /**
  * Created by Boris Mitioglov on 23/10/2018.
  */
-@SuppressWarnings("unchecked")
 public class RandomizedQueue<Item> implements Iterable<Item> {
     private Item[] array;
     private int numberOfItems = 0;
 
-    private int startElement = 0;
+    private final int startElement = 0;
     private int endElement = -1;
 
     public RandomizedQueue() {
