@@ -96,8 +96,8 @@ public class Point implements Comparable<Point> {
      */
     public Comparator<Point> slopeOrder() {
         return (o1, o2) -> {
-            if (o1.slopeTo(o2) > 0) return 1;
-            if (o1.slopeTo(o2) < 0) return -1;
+            if (this.slopeTo(o1) > this.slopeTo(o2)) return 1;
+            if (this.slopeTo(o1) < this.slopeTo(o2)) return -1;
             return 0;
         };
     }
