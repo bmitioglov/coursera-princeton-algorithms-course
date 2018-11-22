@@ -1,4 +1,4 @@
-package elementary_sorts;
+package collinear_points;
 
 /*************************************************************************
  *  Compilation:  javac LineSegment.java
@@ -16,6 +16,8 @@ public class LineSegment {
     private final Point p;   // one endpoint of this line segment
     private final Point q;   // the other endpoint of this line segment
 
+    private double slope;
+    private int length;
     /**
      * Initializes a new line segment.
      *
@@ -63,5 +65,28 @@ public class LineSegment {
         throw new UnsupportedOperationException();
     }
 
+    public void setSlope(double slope) {
+        this.slope = slope;
+    }
+
+    public void setLength(int length) {
+        this.length = length;
+    }
+
+    public double getSlope() {
+        return slope;
+    }
+
+    public int getLength() {
+        return length;
+    }
+
+    public Point getP() {
+        return p;
+    }
+
+    public Point getQ() {
+        return q;
+    }
 }
 

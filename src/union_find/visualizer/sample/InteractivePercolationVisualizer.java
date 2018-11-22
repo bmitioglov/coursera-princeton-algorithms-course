@@ -1,4 +1,4 @@
-package union_find.coursera.sample;
+package union_find.visualizer.sample;
 
 /******************************************************************************
  *  Compilation:  javac InteractivePercolationVisualizer.java
@@ -16,7 +16,6 @@ package union_find.coursera.sample;
 import edu.princeton.cs.algs4.StdDraw;
 import edu.princeton.cs.algs4.StdOut;
 import union_find.Percolation;
-import union_find.coursera.sample.PercolationVisualizer;
 
 public class InteractivePercolationVisualizer {
 

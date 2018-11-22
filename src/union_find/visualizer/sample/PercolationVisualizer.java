@@ -1,4 +1,4 @@
-package union_find.coursera.sample;
+package union_find.visualizer.sample;
 
 /******************************************************************************
  *  Compilation:  javac PercolationVisualizer.java
