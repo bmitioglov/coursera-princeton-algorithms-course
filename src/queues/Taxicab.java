@@ -3,20 +3,20 @@ package queues;
 import edu.princeton.cs.algs4.MinPQ;
 import edu.princeton.cs.algs4.StdOut;
 
-public class PriorityQueueTaxicab implements Comparable<PriorityQueueTaxicab> {
+public class Taxicab implements Comparable<Taxicab> {
     private final int i;
     private final int j;
     private final long sum;   // i^3 + j^3, cached to avoid recomputation
 
     // create a new tuple (i, j, i^3 + j^3)
-    public PriorityQueueTaxicab(int i, int j) {
+    public Taxicab(int i, int j) {
         this.sum = (long) i*i*i + (long) j*j*j;
         this.i = i;
         this.j = j;
     }
 
     // compare by i^3 + j^3, breaking ties by i
-    public int compareTo(PriorityQueueTaxicab that) {
+    public int compareTo(Taxicab that) {
         if      (this.sum < that.sum) return -1;
         else if (this.sum > that.sum) return +1;
         else if (this.i < that.i)     return -1;
@@ -35,16 +35,16 @@ public class PriorityQueueTaxicab implements Comparable<PriorityQueueTaxicab> {
         int n = Integer.parseInt(args[0]);
 
         // initialize priority queue
-        MinPQ<PriorityQueueTaxicab> pq = new MinPQ<PriorityQueueTaxicab>();
+        MinPQ<Taxicab> pq = new MinPQ<Taxicab>();
         for (int i = 1; i <= n; i++) {
-            pq.insert(new PriorityQueueTaxicab(i, i));
+            pq.insert(new Taxicab(i, i));
         }
 
         // enumerate sums in ascending order, look for repeated sums
         int run = 1;
-        PriorityQueueTaxicab prev = new PriorityQueueTaxicab(0, 0);   // sentinel
+        Taxicab prev = new Taxicab(0, 0);   // sentinel
         while (!pq.isEmpty()) {
-            PriorityQueueTaxicab curr = pq.delMin();
+            Taxicab curr = pq.delMin();
 
             // current sum is same as previous sum
             if (prev.sum == curr.sum) {
@@ -58,7 +58,7 @@ public class PriorityQueueTaxicab implements Comparable<PriorityQueueTaxicab> {
             }
             prev = curr;
 
-            if (curr.j < n) pq.insert(new PriorityQueueTaxicab(curr.i, curr.j + 1));
+            if (curr.j < n) pq.insert(new Taxicab(curr.i, curr.j + 1));
         }
         if (run > 1) StdOut.println();
     }
