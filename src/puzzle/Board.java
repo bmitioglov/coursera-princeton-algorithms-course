@@ -11,9 +11,17 @@ public class Board {
     private int numberOfMoves = 0;
 
     public Board(int[][] blocks) {
-        board = blocks;
+        board = copyArray(blocks);
     }           // construct a board from an n-by-n array of blocks
     // (where blocks[i][j] = block in row i, column j)
+
+    private int[][] copyArray(int[][] old) {
+        int[][] copy = new int[old.length][old.length];
+        for(int i=0; i<old.length; i++)
+            for(int j=0; j<old[i].length; j++)
+                copy[i][j] = old[i][j];
+        return copy;
+    }
 
     public int dimension() {
         return board.length;
@@ -61,38 +69,101 @@ public class Board {
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board.length; j++) {
                 if (board[i][j] == 0) {
-                    oneBasedRow = i;
-                    oneBasedCol = j;
+                    oneBasedRow = i+1;
+                    oneBasedCol = j+1;
                     break;
                 }
             }
         }
         if (oneBasedCol == 1) {
-            Board copyBoard1 = new Board(board);
             if (oneBasedRow == 1) {
-
+                Board copyBoard1 = new Board(board);
+                swap(copyBoard1.board, 1, 1, 1, 2);
+                neighbors.add(copyBoard1);
+                Board copyBoard2 = new Board(board);
+                swap(copyBoard2.board, 1, 1 , 2, 1);
+                neighbors.add(copyBoard2);
             } else if (oneBasedRow == 2) {
-
+                Board copyBoard1 = new Board(board);
+                swap(copyBoard1.board, 2, 1, 1, 1);
+                neighbors.add(copyBoard1);
+                Board copyBoard2 = new Board(board);
+                swap(copyBoard2.board, 2, 1 , 2, 2);
+                neighbors.add(copyBoard2);
+                Board copyBoard3 = new Board(board);
+                swap(copyBoard3.board, 2, 1 , 3, 1);
+                neighbors.add(copyBoard3);
             } else if (oneBasedRow == 3) {
-
+                Board copyBoard1 = new Board(board);
+                swap(copyBoard1.board, 3, 1, 2, 1);
+                neighbors.add(copyBoard1);
+                Board copyBoard2 = new Board(board);
+                swap(copyBoard2.board, 3, 1 , 3, 2);
+                neighbors.add(copyBoard2);
             }
         } else if (oneBasedCol == 2) {
             if (oneBasedRow == 1) {
-
+                Board copyBoard1 = new Board(board);
+                swap(copyBoard1.board, 1, 2, 1, 1);
+                neighbors.add(copyBoard1);
+                Board copyBoard2 = new Board(board);
+                swap(copyBoard2.board, 1, 2, 2, 2);
+                neighbors.add(copyBoard2);
+                Board copyBoard3 = new Board(board);
+                swap(copyBoard3.board, 1, 2, 1, 3);
+                neighbors.add(copyBoard3);
             } else if (oneBasedRow == 2) {
-
+                Board copyBoard1 = new Board(board);
+                swap(copyBoard1.board, 2, 2, 2, 1);
+                neighbors.add(copyBoard1);
+                Board copyBoard2 = new Board(board);
+                swap(copyBoard2.board, 2, 2, 1, 2);
+                neighbors.add(copyBoard2);
+                Board copyBoard3 = new Board(board);
+                swap(copyBoard3.board, 2, 2, 3, 2);
+                neighbors.add(copyBoard3);
+                Board copyBoard4 = new Board(board);
+                swap(copyBoard4.board, 2, 2, 2, 3);
+                neighbors.add(copyBoard4);
             } else if (oneBasedRow == 3) {
-
+                Board copyBoard1 = new Board(board);
+                swap(copyBoard1.board, 3, 2, 3, 1);
+                neighbors.add(copyBoard1);
+                Board copyBoard2 = new Board(board);
+                swap(copyBoard2.board, 3, 2, 2, 2);
+                neighbors.add(copyBoard2);
+                Board copyBoard3 = new Board(board);
+                swap(copyBoard3.board, 3, 2, 3, 3);
+                neighbors.add(copyBoard3);
             }
         } else if (oneBasedCol == 3) {
             if (oneBasedRow == 1) {
-
+                Board copyBoard1 = new Board(board);
+                swap(copyBoard1.board, 1, 3, 1, 2);
+                neighbors.add(copyBoard1);
+                Board copyBoard2 = new Board(board);
+                swap(copyBoard2.board, 1, 3, 2, 3);
+                neighbors.add(copyBoard2);
             } else if (oneBasedRow == 2) {
-
+                Board copyBoard1 = new Board(board);
+                swap(copyBoard1.board, 2, 3, 1, 3);
+                neighbors.add(copyBoard1);
+                Board copyBoard2 = new Board(board);
+                swap(copyBoard2.board, 2, 3, 2, 2);
+                neighbors.add(copyBoard2);
+                Board copyBoard3 = new Board(board);
+                swap(copyBoard3.board, 2, 3, 3, 3);
+                neighbors.add(copyBoard3);
             } else if (oneBasedRow == 3) {
-
+                Board copyBoard1 = new Board(board);
+                swap(copyBoard1.board, 3, 3, 2, 3);
+                neighbors.add(copyBoard1);
+                Board copyBoard2 = new Board(board);
+                swap(copyBoard2.board, 3, 3, 3, 2);
+                neighbors.add(copyBoard2);
             }
         }
+        return neighbors;
     }     // all neighboring boards
 
     public String toString() {
@@ -121,8 +192,17 @@ public class Board {
         return Math.abs(targetRow - oneBasedRow) + Math.abs(targetColumn - oneBasedCol);
     }
 
+    //receives 1-based indexes
+    private void swap(int[][] boardArg, int row1, int col1, int row2, int col2) {
+        int temp = boardArg[row1-1][col1-1];
+        boardArg[row1-1][col1-1] = boardArg[row2-1][col2-1];
+        boardArg[row2-1][col2-1] = temp;
+    }
+
 
     public static void main(String[] args) {
-
+        int[][] testBoard = {{1, 2, 3}, {4, 5, 6}, {7, 8, 0}};
+        Board board = new Board(testBoard);
+        System.out.println(board.neighbors());
     } // unit tests (not graded)
 }
