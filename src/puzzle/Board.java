@@ -1,6 +1,8 @@
 package puzzle;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class Board {
 
@@ -55,6 +57,7 @@ public class Board {
     public Iterable<Board> neighbors() {
         int oneBasedRow = 0;
         int oneBasedCol = 0;
+        List<Board> neighbors = new ArrayList<Board>();
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board.length; j++) {
                 if (board[i][j] == 0) {
