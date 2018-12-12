@@ -3,6 +3,7 @@ package puzzle;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 public class Board {
 
@@ -18,7 +19,7 @@ public class Board {
     private int[][] copyArray(int[][] old) {
         int[][] copy = new int[old.length][old.length];
         for(int i=0; i<old.length; i++)
-            for(int j=0; j<old[i].length; j++)
+            for(int j=0; j<old.length; j++)
                 copy[i][j] = old[i][j];
         return copy;
     }
@@ -48,21 +49,47 @@ public class Board {
         return distanceCounter + numberOfMoves;
     }                // sum of Manhattan distances between blocks and goal
     public boolean isGoal() {
-        return Arrays.equals(board, goalBoard);
+        return Arrays.deepEquals(board, goalBoard);
     }                // is this board the goal board?
 
     public Board twin() {
-        int[][] copyArray = Arrays.copyOf(board, board.length*board.length);
-        int temp = copyArray[0][0];
-        copyArray[0][0] = copyArray[0][1];
-        copyArray[0][1] = temp;
+        int[][] copyArray = copyArray(board);
+
+        int oneBasedRow = 0;
+        int oneBasedCol = 0;
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board.length; j++) {
+                if (board[i][j] == 0) {
+                    oneBasedRow = i+1;
+                    oneBasedCol = j+1;
+                    break;
+                }
+            }
+        }
+
+        int candidate1Row = 0;
+        int candidate1Column = 0;
+        while (candidate1Row + 1 == oneBasedRow && candidate1Column + 1 == oneBasedCol) {
+            candidate1Row = new Random().nextInt(3);
+            candidate1Column = new Random().nextInt(3);
+        }
+
+        int candidate2Row = 0;
+        int candidate2Column = 0;
+        while (candidate2Row + 1 == oneBasedRow && candidate2Column + 1 == oneBasedCol) {
+            candidate2Row = new Random().nextInt(3);
+            candidate2Column = new Random().nextInt(3);
+        }
+
+
+        int temp = copyArray[candidate1Row][candidate1Column];
+        copyArray[candidate1Row][candidate1Column] = copyArray[candidate2Row][candidate2Column];
+        copyArray[candidate2Row][candidate2Column] = temp;
         return new Board(copyArray);
     }                   // a board that is obtained by exchanging any pair of blocks
-    public boolean equals(Object y) {
-        return Arrays.equals(board, (int[][]) y);
-    }        // does this board equal y?
 
-    public Iterable<Board> neighbors() {
+
+    public List<Board> neighbors() {
         int oneBasedRow = 0;
         int oneBasedCol = 0;
         List<Board> neighbors = new ArrayList<Board>();
@@ -199,10 +226,24 @@ public class Board {
         boardArg[row2-1][col2-1] = temp;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Board board1 = (Board) o;
+
+        return Arrays.deepEquals(board, board1.board);
+    }
+
+    @Override
+    public int hashCode() {
+        return Arrays.deepHashCode(board);
+    }
 
     public static void main(String[] args) {
         int[][] testBoard = {{1, 2, 3}, {4, 5, 6}, {7, 8, 0}};
         Board board = new Board(testBoard);
-        System.out.println(board.neighbors());
+        System.out.println(board.neighbors().size());
     } // unit tests (not graded)
 }
