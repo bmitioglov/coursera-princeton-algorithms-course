@@ -199,6 +199,9 @@ public class Board {
         for (int[] aBoard : board) {
             for (int j = 0; j < board.length; j++) {
                 sb.append(aBoard[j]);
+                if (j != board.length - 1) {
+                    sb.append("\t");
+                }
             }
             sb.append("\n");
         }
