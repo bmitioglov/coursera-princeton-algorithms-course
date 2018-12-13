@@ -4,39 +4,19 @@ import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.MinPQ;
 import edu.princeton.cs.algs4.StdOut;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 public class Solver {
-    List<Board> solution;
-    int minNumberOfModes = 0;
-    boolean isSolvable = true;
+    private List<Board> solution;
+    private int minNumberOfModes = 0;
+    private boolean isSolvable = true;
 
     public Solver(Board initial) {
-        MinPQ<Board> minPQ1 = new MinPQ<>(new Comparator<Board>() {
-            @Override
-            public int compare(Board o1, Board o2) {
-                if (o1.hamming() < o2.hamming()) {
-                    return -1;
-                } else if (o1.hamming() == o2.hamming()) {
-                    return 0;
-                } else {
-                    return 1;
-                }
-            }
-        });
-
-        MinPQ<Board> minPQ2 = new MinPQ<>(new Comparator<Board>() {
-            @Override
-            public int compare(Board o1, Board o2) {
-                if (o1.hamming() < o2.hamming()) {
-                    return -1;
-                } else if (o1.hamming() == o2.hamming()) {
-                    return 0;
-                } else {
-                    return 1;
-                }
-            }
-        });
+        MinPQ<Board> minPQ1 = new MinPQ<>(new ManhattanComparator());
+        MinPQ<Board> minPQ2 = new MinPQ<>(new ManhattanComparator());
 
 
         List<Board> solution1 = new ArrayList<Board>();
@@ -51,13 +31,13 @@ public class Solver {
 
         while (!current.isGoal() && !currentTwin.isGoal()) {
             for (Board board: current.neighbors()) {
-                if (!prevBoards1.contains(board)) {
+                if (!contains(prevBoards1, board)) {
                     minPQ1.insert(board);
                     prevBoards1.add(board);
                 }
             }
             for (Board board: currentTwin.neighbors()) {
-                if (!prevBoards2.contains(board)) {
+                if (!contains(prevBoards2, board)) {
                     minPQ2.insert(board);
                     prevBoards2.add(board);
                 }
@@ -77,6 +57,39 @@ public class Solver {
             isSolvable = false;
         }
     }          // find a solution to the initial board (using the A* algorithm)
+
+    private class HammingComparator implements Comparator<Board> {
+        @Override
+        public int compare(Board o1, Board o2) {
+            if (o1.hamming() < o2.hamming()) {
+                return -1;
+            } else if (o1.hamming() == o2.hamming()) {
+                return 0;
+            } else {
+                return 1;
+            }
+        }
+    }
+
+    private class ManhattanComparator implements Comparator<Board> {
+        @Override
+        public int compare(Board o1, Board o2) {
+            if (o1.manhattan() < o2.manhattan()) {
+                return -1;
+            } else if (o1.manhattan() == o2.manhattan()) {
+                return 0;
+            } else {
+                return 1;
+            }
+        }
+    }
+
+    private boolean contains(List<Board> list, Board board) {
+        for (Board boardInList: list) {
+            if (boardInList.equals(board)) return true;
+        }
+        return false;
+    }
 
     public boolean isSolvable() {
         return isSolvable;

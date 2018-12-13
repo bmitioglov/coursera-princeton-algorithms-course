@@ -32,7 +32,7 @@ public class Board {
         int outOfPlaceCounter = 0;
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board.length; j++) {
-                if (board[i][j] != getGlobalIndex(i+1, j+1)) outOfPlaceCounter++;
+                if (board[i][j] != getGlobalIndex(i+1, j+1) && board[i][j] != 0) outOfPlaceCounter++;
             }
         }
         return outOfPlaceCounter + numberOfMoves;
@@ -43,7 +43,8 @@ public class Board {
         int distanceCounter = 0;
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board.length; j++) {
-                if (board[i][j] != getGlobalIndex(i+1, j+1)) distanceCounter+=getDistance(i, j, board[i][j]);
+                if (board[i][j] != getGlobalIndex(i+1, j+1) && board[i][j] != 0)
+                    distanceCounter+=getDistance(i, j, board[i][j]);
             }
         }
         return distanceCounter + numberOfMoves;
@@ -89,7 +90,7 @@ public class Board {
     }                   // a board that is obtained by exchanging any pair of blocks
 
 
-    public List<Board> neighbors() {
+    public Iterable<Board> neighbors() {
         int oneBasedRow = 0;
         int oneBasedCol = 0;
         List<Board> neighbors = new ArrayList<Board>();
@@ -236,14 +237,15 @@ public class Board {
         return Arrays.deepEquals(board, board1.board);
     }
 
-    @Override
-    public int hashCode() {
-        return Arrays.deepHashCode(board);
-    }
+//    @Override
+//    public int hashCode() {
+//        return Arrays.deepHashCode(board);
+//    }
 
     public static void main(String[] args) {
-        int[][] testBoard = {{1, 2, 3}, {4, 5, 6}, {7, 8, 0}};
-        Board board = new Board(testBoard);
-        System.out.println(board.neighbors().size());
+//        int[][] testBoard = {{1, 2, 3}, {4, 5, 6}, {7, 8, 0}};
+        int[][] testBoard2 = {{0, 1, 3}, {4, 2, 5}, {7, 8, 6}};
+        Board board = new Board(testBoard2);
+        System.out.println(board.manhattan());
     } // unit tests (not graded)
 }
