@@ -20,8 +20,14 @@ public class Solver {
 
         Board current = initial;
         Board currentTwin = initial.twin();
+        minPQ1.insert(current);
+        minPQ2.insert(currentTwin);
 
         while (!current.isGoal() && !currentTwin.isGoal()) {
+
+            current = minPQ1.delMin();
+            currentTwin = minPQ2.delMin();
+
             for (Board board: current.neighbors()) {
                 if (!board.equals(current.getPrev())) {
                     minPQ1.insert(board);
@@ -34,8 +40,6 @@ public class Solver {
                     board.setPrev(currentTwin);
                 }
             }
-            current = minPQ1.delMin();
-            currentTwin = minPQ2.delMin();
         }
 
         if (current.isGoal()) {
