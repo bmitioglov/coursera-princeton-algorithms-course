@@ -165,9 +165,8 @@ public class Board {
 
 
     public static void main(String[] args) {
-//        int[][] testBoard = {{1, 2, 3}, {4, 5, 6}, {7, 8, 0}};
-        int[][] testBoard2 = {{1, 2}, {3, 0}};
+        int[][] testBoard2 = {{1, 5, 2}, {7, 0, 4}, {8, 6, 3}};
         Board board = new Board(testBoard2);
-        System.out.println(board.isGoal());
+        System.out.println(board.manhattan());
     } // unit tests (not graded)
 }
