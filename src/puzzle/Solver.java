@@ -1,6 +1,5 @@
 package puzzle;
 
-import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.MinPQ;
 import edu.princeton.cs.algs4.StdOut;
