@@ -12,6 +12,14 @@ public class Board {
     private static int idGenerator = 0;
     private Board prev;
 
+    public int getNumberOfMoves() {
+        return numberOfMoves;
+    }
+
+    public void setNumberOfMoves(int numberOfMoves) {
+        this.numberOfMoves = numberOfMoves;
+    }
+
     public Board getPrev() {
         return prev;
     }
@@ -167,6 +175,6 @@ public class Board {
     public static void main(String[] args) {
         int[][] testBoard2 = {{1, 5, 2}, {7, 0, 4}, {8, 6, 3}};
         Board board = new Board(testBoard2);
-        System.out.println(board.manhattan());
+//        System.out.println(board.manhattan());
     } // unit tests (not graded)
 }

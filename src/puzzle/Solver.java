@@ -1,5 +1,6 @@
 package puzzle;
 
+import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.MinPQ;
 import edu.princeton.cs.algs4.StdOut;
@@ -20,8 +21,11 @@ public class Solver {
 
         Board current = initial;
         Board currentTwin = initial.twin();
+        current.setPrev(null);
+        currentTwin.setPrev(null);
         minPQ1.insert(current);
         minPQ2.insert(currentTwin);
+
 
         while (!current.isGoal() && !currentTwin.isGoal()) {
 
@@ -30,14 +34,17 @@ public class Solver {
 
             for (Board board: current.neighbors()) {
                 if (!board.equals(current.getPrev())) {
-                    minPQ1.insert(board);
                     board.setPrev(current);
+                    board.setNumberOfMoves(numberOfMovesForTheBoard(board));
+                    minPQ1.insert(board);
+
                 }
             }
             for (Board board: currentTwin.neighbors()) {
                 if (!board.equals(currentTwin.getPrev())) {
+                    board.setPrev(current);
+                    board.setNumberOfMoves(numberOfMovesForTheBoard(board));
                     minPQ2.insert(board);
-                    board.setPrev(currentTwin);
                 }
             }
         }
@@ -50,6 +57,16 @@ public class Solver {
             isSolvable = false;
         }
     }          // find a solution to the initial board (using the A* algorithm)
+
+    private int numberOfMovesForTheBoard(Board board) {
+        Board currentBoard = board;
+        int numberOfMoves = 0;
+        while (currentBoard != null) {
+            currentBoard = currentBoard.getPrev();
+            numberOfMoves++;
+        }
+        return numberOfMoves;
+    }
 
     private class HammingComparator implements Comparator<Board> {
         @Override
@@ -77,12 +94,6 @@ public class Solver {
         }
     }
 
-    private boolean contains(List<Board> list, Board board) {
-        for (Board boardInList: list) {
-            if (boardInList.equals(board)) return true;
-        }
-        return false;
-    }
 
     public boolean isSolvable() {
         return isSolvable;
@@ -91,7 +102,7 @@ public class Solver {
 
     public int moves() {
         solution();
-        return minNumberOfMoves;
+        return minNumberOfMoves - 1;
     }                     // min number of moves to solve initial board; -1 if unsolvable
 
     public Iterable<Board> solution() {
