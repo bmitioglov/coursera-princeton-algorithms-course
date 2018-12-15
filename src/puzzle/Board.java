@@ -6,14 +6,23 @@ import java.util.Arrays;
 public class Board {
 
     private int[][] board;
-    private int[][] goalBoard = {{1, 2, 3}, {4, 5, 6}, {7, 8, 0}};
     private int numberOfMoves = 0;
     private int SPACE = 0;
+    private Board predecessor = null;
+    private static int idGenerator = 0;
+    private Board prev;
+
+    public Board getPrev() {
+        return prev;
+    }
+
+    public void setPrev(Board prev) {
+        this.prev = prev;
+    }
 
     public Board(int[][] blocks) {
         board = copyArray(blocks);
     }           // construct a board from an n-by-n array of blocks
-    // (where blocks[i][j] = block in row i, column j)
 
     private int[][] copyArray(int[][] old) {
         int[][] copy = new int[old.length][old.length];
@@ -43,13 +52,23 @@ public class Board {
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board.length; j++) {
                 if (board[i][j] != getGlobalIndex(i+1, j+1) && board[i][j] != 0)
-                    distanceCounter+=getDistance(i, j, board[i][j]);
+                    distanceCounter+=getDistance(i, j, board[i][j], board.length);
             }
         }
         return distanceCounter + numberOfMoves;
     }                // sum of Manhattan distances between blocks and goal
     public boolean isGoal() {
-        return Arrays.deepEquals(board, goalBoard);
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board.length; j++) {
+                if (board[i][j] != getGlobalIndex(i+1, j+1) && board[i][j] != 0) {
+                    return false;
+                }
+            }
+        }
+        return board[board.length-1][board.length-1] == 0;
+
+
+//        return Arrays.deepEquals(board, goalBoard);
     }                // is this board the goal board?
 
 
@@ -88,12 +107,10 @@ public class Board {
 
     public String toString() {
         StringBuilder sb = new StringBuilder();
+        sb.append(dimension() + "\n");
         for (int[] aBoard : board) {
             for (int j = 0; j < board.length; j++) {
-                sb.append(aBoard[j]);
-                if (j != board.length - 1) {
-                    sb.append("\t");
-                }
+                sb.append(String.format("%2d ", aBoard[j]));
             }
             sb.append("\n");
         }
@@ -105,22 +122,16 @@ public class Board {
     }
 
     //receives zero based row and column
-    private int getDistance(int row, int col, int value) {
+    private int getDistance(int row, int col, int value, int boardLength) {
         int oneBasedRow = row + 1;
         int oneBasedCol = col + 1;
         int whole = value / board.length;
         int remainder = value % board.length;
         int targetRow = whole + (remainder > 0 ? 1 : 0);
-        int targetColumn = remainder + (remainder == 0 ? 3: 0);
+        int targetColumn = remainder + (remainder == 0 ? boardLength: 0);
         return Math.abs(targetRow - oneBasedRow) + Math.abs(targetColumn - oneBasedCol);
     }
 
-    //receives 1-based indexes
-    private void swap(int[][] boardArg, int row1, int col1, int row2, int col2) {
-        int temp = boardArg[row1-1][col1-1];
-        boardArg[row1-1][col1-1] = boardArg[row2-1][col2-1];
-        boardArg[row2-1][col2-1] = temp;
-    }
 
     @Override
     public boolean equals(Object o) {
@@ -129,8 +140,11 @@ public class Board {
 
         Board board1 = (Board) o;
 
-        return Arrays.deepEquals(board, board1.board);
+        if (!Arrays.deepEquals(board, board1.board)) return false;
+        return predecessor != null ? predecessor.equals(board1.predecessor) : board1.predecessor == null;
     }
+
+
 
     public Board twin() {
         for (int row = 0; row < board.length; row++)
@@ -149,15 +163,11 @@ public class Board {
         return copy;
     }
 
-//    @Override
-//    public int hashCode() {
-//        return Arrays.deepHashCode(board);
-//    }
 
     public static void main(String[] args) {
 //        int[][] testBoard = {{1, 2, 3}, {4, 5, 6}, {7, 8, 0}};
-        int[][] testBoard2 = {{0, 1, 3}, {4, 2, 5}, {7, 8, 6}};
+        int[][] testBoard2 = {{1, 2}, {3, 0}};
         Board board = new Board(testBoard2);
-        System.out.println(board.manhattan());
+        System.out.println(board.isGoal());
     } // unit tests (not graded)
 }
