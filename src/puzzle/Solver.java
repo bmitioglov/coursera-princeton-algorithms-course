@@ -36,7 +36,6 @@ public class Solver {
                     board.setPrev(current);
                     board.setNumberOfMoves(numberOfMovesForTheBoard(board));
                     minPQ1.insert(board);
-
                 }
             }
             for (Board board: currentTwin.neighbors()) {
