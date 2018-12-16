@@ -18,8 +18,10 @@ public class Solver {
         MinPQ<BoardWrapper> minPQ1 = new MinPQ<>(new ManhattanComparator());
         MinPQ<BoardWrapper> minPQ2 = new MinPQ<>(new ManhattanComparator());
 
-        BoardWrapper current = new BoardWrapper(initial, null, 0);
-        BoardWrapper currentTwin = new BoardWrapper(initial.twin(), null, 0);
+        BoardWrapper current = new BoardWrapper(initial, null, 0,
+                initial.manhattan());
+        BoardWrapper currentTwin = new BoardWrapper(initial.twin(), null, 0,
+                initial.twin().manhattan());
         minPQ1.insert(current);
         minPQ2.insert(currentTwin);
 
@@ -32,13 +34,13 @@ public class Solver {
             for (Board board: current.getCurrentBoard().neighbors()) {
                 if (current.getPrev() == null || !board.equals(current.getPrev().currentBoard)) {
                     minPQ1.insert(new BoardWrapper(board, current,
-                            numberOfMovesForTheBoard(current) + 1));
+                            numberOfMovesForTheBoard(current) + 1, board.manhattan()));
                 }
             }
             for (Board board: currentTwin.getCurrentBoard().neighbors()) {
                 if (currentTwin.getPrev() == null || !board.equals(currentTwin.getPrev().currentBoard)) {
                     minPQ2.insert(new BoardWrapper(board, currentTwin,
-                            numberOfMovesForTheBoard(currentTwin) + 1));
+                            numberOfMovesForTheBoard(currentTwin) + 1, board.manhattan()));
                 }
             }
         }
@@ -56,11 +58,13 @@ public class Solver {
         Board currentBoard;
         BoardWrapper prev;
         int numOfMoves;
+        int manhattan;
 
-        BoardWrapper(Board board, BoardWrapper prev, int numberOfMoves) {
+        BoardWrapper(Board board, BoardWrapper prev, int numberOfMoves, int manhattan) {
             currentBoard = board;
             this.prev = prev;
             numOfMoves = numberOfMoves;
+            this.manhattan = manhattan;
         }
 
         Board getCurrentBoard() {
@@ -98,24 +102,11 @@ public class Solver {
         return numberOfMoves;
     }
 
-//    private class HammingComparator implements Comparator<Board> {
-//        @Override
-//        public int compare(Board o1, Board o2) {
-//            if (o1.hamming() < o2.hamming()) {
-//                return -1;
-//            } else if (o1.hamming() == o2.hamming()) {
-//                return 0;
-//            } else {
-//                return 1;
-//            }
-//        }
-//    }
-
     private class ManhattanComparator implements Comparator<BoardWrapper> {
         @Override
         public int compare(BoardWrapper o1, BoardWrapper o2) {
-            int o1Priority = o1.getCurrentBoard().manhattan() + o1.getNumOfMoves();
-            int o2Priority = o2.getCurrentBoard().manhattan() + o2.getNumOfMoves();
+            int o1Priority = o1.manhattan + o1.getNumOfMoves();
+            int o2Priority = o2.manhattan + o2.getNumOfMoves();
             if (o1Priority < o2Priority) {
                 return -1;
             } else if (o1Priority == o2Priority) {
