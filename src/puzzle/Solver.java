@@ -2,52 +2,48 @@ package puzzle;
 
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.MinPQ;
+import edu.princeton.cs.algs4.Stack;
 import edu.princeton.cs.algs4.StdOut;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
 
 public class Solver {
-    private Board solution;
+    private BoardWrapper solution;
     private int minNumberOfMoves = 0;
     private boolean isSolvable = true;
 
     public Solver(Board initial) {
-        MinPQ<Board> minPQ1 = new MinPQ<>(new ManhattanComparator());
-        MinPQ<Board> minPQ2 = new MinPQ<>(new ManhattanComparator());
+        if (initial == null) throw new IllegalArgumentException("Board is null");
 
-        Board current = initial;
-        Board currentTwin = initial.twin();
-        current.setPrev(null);
-        currentTwin.setPrev(null);
+        MinPQ<BoardWrapper> minPQ1 = new MinPQ<>(new ManhattanComparator());
+        MinPQ<BoardWrapper> minPQ2 = new MinPQ<>(new ManhattanComparator());
+
+        BoardWrapper current = new BoardWrapper(initial, null, 0);
+        BoardWrapper currentTwin = new BoardWrapper(initial.twin(), null, 0);
         minPQ1.insert(current);
         minPQ2.insert(currentTwin);
 
 
-        while (!current.isGoal() && !currentTwin.isGoal()) {
+        while (!current.getCurrentBoard().isGoal() && !currentTwin.getCurrentBoard().isGoal()) {
 
             current = minPQ1.delMin();
             currentTwin = minPQ2.delMin();
 
-            for (Board board: current.neighbors()) {
-                if (!board.equals(current.getPrev())) {
-                    board.setPrev(current);
-                    board.setNumberOfMoves(numberOfMovesForTheBoard(board));
-                    minPQ1.insert(board);
+            for (Board board: current.getCurrentBoard().neighbors()) {
+                if (current.getPrev() == null || !board.equals(current.getPrev().currentBoard)) {
+                    minPQ1.insert(new BoardWrapper(board, current,
+                            numberOfMovesForTheBoard(current) + 1));
                 }
             }
-            for (Board board: currentTwin.neighbors()) {
-                if (!board.equals(currentTwin.getPrev())) {
-                    board.setPrev(current);
-                    board.setNumberOfMoves(numberOfMovesForTheBoard(board));
-                    minPQ2.insert(board);
+            for (Board board: currentTwin.getCurrentBoard().neighbors()) {
+                if (currentTwin.getPrev() == null || !board.equals(currentTwin.getPrev().currentBoard)) {
+                    minPQ2.insert(new BoardWrapper(board, currentTwin,
+                            numberOfMovesForTheBoard(currentTwin) + 1));
                 }
             }
         }
 
-        if (current.isGoal()) {
+        if (current.getCurrentBoard().isGoal()) {
             solution = current;
             isSolvable = true;
         } else {
@@ -56,8 +52,44 @@ public class Solver {
         }
     }          // find a solution to the initial board (using the A* algorithm)
 
-    private int numberOfMovesForTheBoard(Board board) {
-        Board currentBoard = board;
+    private class BoardWrapper {
+        Board currentBoard;
+        BoardWrapper prev;
+        int numOfMoves;
+
+        BoardWrapper(Board board, BoardWrapper prev, int numberOfMoves) {
+            currentBoard = board;
+            this.prev = prev;
+            numOfMoves = numberOfMoves;
+        }
+
+        Board getCurrentBoard() {
+            return currentBoard;
+        }
+
+        void setCurrentBoard(Board currentBoard) {
+            this.currentBoard = currentBoard;
+        }
+
+        BoardWrapper getPrev() {
+            return prev;
+        }
+
+        void setPrev(BoardWrapper prev) {
+            this.prev = prev;
+        }
+
+        int getNumOfMoves() {
+            return numOfMoves;
+        }
+
+        void setNumOfMoves(int numOfMoves) {
+            this.numOfMoves = numOfMoves;
+        }
+    }
+
+    private int numberOfMovesForTheBoard(BoardWrapper board) {
+        BoardWrapper currentBoard = board;
         int numberOfMoves = 0;
         while (currentBoard != null) {
             currentBoard = currentBoard.getPrev();
@@ -66,25 +98,27 @@ public class Solver {
         return numberOfMoves;
     }
 
-    private class HammingComparator implements Comparator<Board> {
-        @Override
-        public int compare(Board o1, Board o2) {
-            if (o1.hamming() < o2.hamming()) {
-                return -1;
-            } else if (o1.hamming() == o2.hamming()) {
-                return 0;
-            } else {
-                return 1;
-            }
-        }
-    }
+//    private class HammingComparator implements Comparator<Board> {
+//        @Override
+//        public int compare(Board o1, Board o2) {
+//            if (o1.hamming() < o2.hamming()) {
+//                return -1;
+//            } else if (o1.hamming() == o2.hamming()) {
+//                return 0;
+//            } else {
+//                return 1;
+//            }
+//        }
+//    }
 
-    private class ManhattanComparator implements Comparator<Board> {
+    private class ManhattanComparator implements Comparator<BoardWrapper> {
         @Override
-        public int compare(Board o1, Board o2) {
-            if (o1.manhattan() < o2.manhattan()) {
+        public int compare(BoardWrapper o1, BoardWrapper o2) {
+            int o1Priority = o1.getCurrentBoard().manhattan() + o1.getNumOfMoves();
+            int o2Priority = o2.getCurrentBoard().manhattan() + o2.getNumOfMoves();
+            if (o1Priority < o2Priority) {
                 return -1;
-            } else if (o1.manhattan() == o2.manhattan()) {
+            } else if (o1Priority == o2Priority) {
                 return 0;
             } else {
                 return 1;
@@ -104,19 +138,19 @@ public class Solver {
     }                     // min number of moves to solve initial board; -1 if unsolvable
 
     public Iterable<Board> solution() {
-        List<Board> solutionList = new ArrayList<>();
+        Stack<Board> solutionStack = new Stack<>();
         if (isSolvable()) {
-            Board currentSolution = solution;
-            solutionList.add(currentSolution);
+            BoardWrapper currentSolution = solution;
+            solutionStack.push(currentSolution.currentBoard);
             while (currentSolution.getPrev() != null) {
-                solutionList.add(currentSolution.getPrev());
+                solutionStack.push(currentSolution.getPrev().currentBoard);
                 currentSolution = currentSolution.getPrev();
             }
-            minNumberOfMoves = solutionList.size();
-            return solutionList;
+            minNumberOfMoves = solutionStack.size();
+            return solutionStack;
         } else {
             minNumberOfMoves = 0;
-            return Collections.emptyList();
+            return null;
         }
     }      // sequence of boards in a shortest solution; null if unsolvable
 

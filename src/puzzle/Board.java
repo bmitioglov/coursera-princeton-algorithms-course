@@ -1,4 +1,4 @@
-package puzzle;
+ package puzzle;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -6,27 +6,7 @@ import java.util.Arrays;
 public class Board {
 
     private int[][] board;
-    private int numberOfMoves = 0;
-    private int SPACE = 0;
-    private Board predecessor = null;
-    private static int idGenerator = 0;
-    private Board prev;
 
-    public int getNumberOfMoves() {
-        return numberOfMoves;
-    }
-
-    public void setNumberOfMoves(int numberOfMoves) {
-        this.numberOfMoves = numberOfMoves;
-    }
-
-    public Board getPrev() {
-        return prev;
-    }
-
-    public void setPrev(Board prev) {
-        this.prev = prev;
-    }
 
     public Board(int[][] blocks) {
         board = copyArray(blocks);
@@ -51,7 +31,7 @@ public class Board {
                 if (board[i][j] != getGlobalIndex(i+1, j+1) && board[i][j] != 0) outOfPlaceCounter++;
             }
         }
-        return outOfPlaceCounter + numberOfMoves;
+        return outOfPlaceCounter;
     }                   // number of blocks out of place
 
 
@@ -63,7 +43,7 @@ public class Board {
                     distanceCounter+=getDistance(i, j, board[i][j], board.length);
             }
         }
-        return distanceCounter + numberOfMoves;
+        return distanceCounter;
     }                // sum of Manhattan distances between blocks and goal
     public boolean isGoal() {
         for (int i = 0; i < board.length; i++) {
@@ -74,9 +54,6 @@ public class Board {
             }
         }
         return board[board.length-1][board.length-1] == 0;
-
-
-//        return Arrays.deepEquals(board, goalBoard);
     }                // is this board the goal board?
 
 
@@ -94,6 +71,7 @@ public class Board {
     }
 
     private boolean isSpace(int block) {
+        int SPACE = 0;
         return block == SPACE;
     }
 
@@ -141,6 +119,18 @@ public class Board {
     }
 
 
+//    @Override
+//    public boolean equals(Object o) {
+//        if (this == o) return true;
+//        if (o == null || getClass() != o.getClass()) return false;
+//
+//        Board board1 = (Board) o;
+//
+//        if (!Arrays.deepEquals(board, board1.board)) return false;
+//        return predecessor != null ? predecessor.equals(board1.predecessor) : board1.predecessor == null;
+//    }
+
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -148,11 +138,8 @@ public class Board {
 
         Board board1 = (Board) o;
 
-        if (!Arrays.deepEquals(board, board1.board)) return false;
-        return predecessor != null ? predecessor.equals(board1.predecessor) : board1.predecessor == null;
+        return Arrays.deepEquals(board, board1.board);
     }
-
-
 
     public Board twin() {
         for (int row = 0; row < board.length; row++)
