@@ -39,7 +39,7 @@ public class KdTree {
         if (size == 0) {
             tree = new Node(p, Alignment.Vertical);
         } else {
-
+            insertInKdTree(tree, p);
         }
     }            // add the point to the set (if it is not already in the set)
 
