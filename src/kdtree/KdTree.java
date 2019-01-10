@@ -135,14 +135,14 @@ public class KdTree {
     }            // all points that are inside the rectangle (or on the boundary)
 
     private List<Point2D> findInRange(Node tree, RectHV rect, List<Point2D> pointsInRange) {
-        System.out.println("Adding point = " + tree.point);
+        System.out.println("Checking point for rectangle = " + tree.point);
         if (rect.contains(tree.point)) pointsInRange.add(tree.point);
         if (tree.alignment == Alignment.Vertical) {
-            if (rect.xmin() < tree.point.x() && rect.xmax() > tree.point.x()) {
+            if (rect.xmin() <= tree.point.x() && rect.xmax() >= tree.point.x()) {
                 if (tree.left != null) findInRange(tree.left, rect, pointsInRange);
                 if (tree.right != null) findInRange(tree.right, rect, pointsInRange);
                 return pointsInRange;
-            } else if (rect.xmax() <= tree.point.x()) {
+            } else if (rect.xmax() < tree.point.x()) {
                 if (tree.left == null) {
                     return Collections.emptyList();
                 } else {
@@ -150,7 +150,7 @@ public class KdTree {
                     findInRange(tree.left, rect, pointsInRange);
                     return pointsInRange;
                 }
-            } else if (rect.xmin() >= tree.point.x()) {
+            } else if (rect.xmin() > tree.point.x()) {
                 if (tree.right == null) {
                     return Collections.emptyList();
                 } else {
@@ -162,18 +162,18 @@ public class KdTree {
                 return Collections.emptyList();
             }
         } else {
-            if (rect.ymin() < tree.point.y() && rect.ymax() > tree.point.y()) {
+            if (rect.ymin() <= tree.point.y() && rect.ymax() >= tree.point.y()) {
                 if (tree.left != null) findInRange(tree.left, rect, pointsInRange);
                 if (tree.right != null) findInRange(tree.right, rect, pointsInRange);
                 return pointsInRange;
-            } else if (rect.ymax() <= tree.point.y()) {
+            } else if (rect.ymax() < tree.point.y()) {
                 if (tree.left == null) {
                     return Collections.emptyList();
                 } else {
                     findInRange(tree.left, rect, pointsInRange);
                     return pointsInRange;
                 }
-            } else if (rect.ymin() >= tree.point.y()) {
+            } else if (rect.ymin() > tree.point.y()) {
                 if (tree.right == null) {
                     return Collections.emptyList();
                 } else {
@@ -199,8 +199,11 @@ public class KdTree {
         kdTree.insert(new Point2D(1, 2));
         kdTree.insert(new Point2D(2, 2));
         kdTree.insert(new Point2D(0, 1));
-        System.out.println(kdTree.contains(new Point2D(0, 1)));
-        System.out.println(kdTree.range(new RectHV(0, 0, 1, 1)));
+        kdTree.insert(new Point2D(0, 0));
+        kdTree.insert(new Point2D(-1, 0));
+        kdTree.insert(new Point2D(0, 2));
+        System.out.println(kdTree.contains(new Point2D(2, 2)));
+        System.out.println(kdTree.range(new RectHV(1, 0, 2, 2)));
 
     }                 // unit testing of the methods (optional)
 }
