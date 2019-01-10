@@ -2,6 +2,7 @@ package kdtree;
 
 import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.RectHV;
+import edu.princeton.cs.algs4.StdDraw;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -124,9 +125,68 @@ public class KdTree {
         }
     }
 
-//    public              void draw() {
-//
-//    }                        // draw all points to standard draw
+
+    /**
+     * Draw functions have been taken from https://gist.github.com/taiwotman/9810619
+     */
+    public void draw()
+    {
+        RectHV drawTable = new  RectHV(0, 0, 1, 1);
+        StdDraw.setScale(0, 1);
+
+        StdDraw.setPenColor(StdDraw.BLACK);
+        StdDraw.setPenRadius();
+        drawTable.draw();
+
+        draw(tree, drawTable);
+    }
+
+    private void draw(final Node tree, final RectHV rect)
+    {
+        if (tree == null) return;
+
+        // draw the point
+        StdDraw.setPenColor(StdDraw.BLACK);
+        StdDraw.setPenRadius(0.01);
+        new Point2D(tree.point.x(), tree.point.y()).draw();
+
+        // min and max points of division line
+        Point2D min, max;
+        if (tree.alignment == Alignment.Vertical) {
+            StdDraw.setPenColor(StdDraw.RED);
+            min = new Point2D(tree.point.x(), rect.ymin());
+            max = new Point2D(tree.point.x(), rect.ymax());
+        } else {
+            StdDraw.setPenColor(StdDraw.BLUE);
+            min = new Point2D(rect.xmin(), tree.point.y());
+            max = new Point2D(rect.xmax(), tree.point.y());
+        }
+
+        // draw that division line
+        StdDraw.setPenRadius();
+        min.drawTo(max);
+
+        // recursively draw children
+        draw(tree.left, leftRect(rect, tree));
+        draw(tree.right, rightRect(rect, tree));
+    }
+    private RectHV leftRect(final RectHV rect, final Node tree)
+    {
+        if (tree.alignment == Alignment.Vertical)
+            return new RectHV(rect.xmin(), rect.ymin(), tree.point.x(), rect.ymax());
+        else
+            return new RectHV(rect.xmin(), rect.ymin(), rect.xmax(), tree.point.y());
+    }
+    private RectHV rightRect(final RectHV rect, final Node tree)
+    {
+        if (tree.alignment == Alignment.Vertical)
+            return new RectHV(tree.point.x(), rect.ymin(), rect.xmax(), rect.ymax());
+        else
+            return new RectHV(rect.xmin(), tree.point.y(), rect.xmax(), rect.ymax());
+    }
+
+
+
 
     public Iterable<Point2D> range(RectHV rect) {
         if (rect == null) throw new IllegalArgumentException("Rectangle is null");
