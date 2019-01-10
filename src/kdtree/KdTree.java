@@ -135,7 +135,7 @@ public class KdTree {
     }            // all points that are inside the rectangle (or on the boundary)
 
     private List<Point2D> findInRange(Node tree, RectHV rect, List<Point2D> pointsInRange) {
-        System.out.println("Checking point for rectangle = " + tree.point);
+//        System.out.println("Checking point for rectangle = " + tree.point);
         if (rect.contains(tree.point)) pointsInRange.add(tree.point);
         if (tree.alignment == Alignment.Vertical) {
             if (rect.xmin() <= tree.point.x() && rect.xmax() >= tree.point.x()) {
@@ -189,9 +189,79 @@ public class KdTree {
 
 
 
-//    public           Point2D nearest(Point2D p) {
-//
-//    }            // a nearest neighbor in the set to point p; null if the set is empty
+    public Point2D nearest(Point2D p) {
+        if (p == null) throw new IllegalArgumentException("Point is null");
+
+        return findNearest(tree, p, tree.point);
+    }            // a nearest neighbor in the set to point p; null if the set is empty
+
+    private Point2D findNearest(Node tree, Point2D point, Point2D currentChampion) {
+        if (tree == null) return currentChampion;
+
+        System.out.println("Checking point = " + tree.point + ", current champion = " + currentChampion);
+
+        if (point.distanceTo(tree.point) < point.distanceTo(currentChampion)) {
+            currentChampion = tree.point;
+        }
+
+        if (tree.alignment == Alignment.Vertical) {
+            if (point.x() < tree.point.x()) {
+                Point2D championInLeftBranch = findNearest(tree.left, point, currentChampion);
+                if (point.distanceTo(championInLeftBranch) < point.distanceTo(currentChampion)) {
+                    currentChampion = championInLeftBranch;
+
+                    if (point.distanceTo(championInLeftBranch) < point.distanceTo(new Point2D(tree.point.x(), point.y()))) {
+                        return currentChampion;
+                    } else {
+                        return findNearest(tree.right, point, currentChampion);
+                    }
+                } else {
+                    return findNearest(tree.right, point, currentChampion);
+                }
+            } else {
+                Point2D championInRightBranch = findNearest(tree.right, point, currentChampion);
+                if (point.distanceTo(championInRightBranch) < point.distanceTo(currentChampion)) {
+                    currentChampion = championInRightBranch;
+
+                    if (point.distanceTo(championInRightBranch) < point.distanceTo(new Point2D(tree.point.x(), point.y()))) {
+                        return currentChampion;
+                    } else {
+                        return findNearest(tree.left, point, currentChampion);
+                    }
+                } else {
+                    return findNearest(tree.left, point, currentChampion);
+                }
+            }
+        } else {
+            if (point.y() < tree.point.y()) {
+                Point2D championInLeftBranch = findNearest(tree.left, point, currentChampion);
+                if (point.distanceTo(championInLeftBranch) < point.distanceTo(currentChampion)) {
+                    currentChampion = championInLeftBranch;
+
+                    if (point.distanceTo(championInLeftBranch) < point.distanceTo(new Point2D(tree.point.y(), point.x()))) {
+                        return currentChampion;
+                    } else {
+                        return findNearest(tree.right, point, currentChampion);
+                    }
+                } else {
+                    return findNearest(tree.right, point, currentChampion);
+                }
+            } else {
+                Point2D championInRightBranch = findNearest(tree.right, point, currentChampion);
+                if (point.distanceTo(championInRightBranch) < point.distanceTo(currentChampion)) {
+                    currentChampion = championInRightBranch;
+
+                    if (point.distanceTo(championInRightBranch) < point.distanceTo(new Point2D(tree.point.y(), point.x()))) {
+                        return currentChampion;
+                    } else {
+                        return findNearest(tree.left, point, currentChampion);
+                    }
+                } else {
+                    return findNearest(tree.left, point, currentChampion);
+                }
+            }
+        }
+    }
 
     public static void main(String[] args) {
         KdTree kdTree = new KdTree();
@@ -202,8 +272,11 @@ public class KdTree {
         kdTree.insert(new Point2D(0, 0));
         kdTree.insert(new Point2D(-1, 0));
         kdTree.insert(new Point2D(0, 2));
-        System.out.println(kdTree.contains(new Point2D(2, 2)));
-        System.out.println(kdTree.range(new RectHV(1, 0, 2, 2)));
+//        System.out.println(kdTree.contains(new Point2D(2, 2)));
+//        System.out.println(kdTree.range(new RectHV(1, 0, 2, 2)));
+        System.out.println(kdTree.nearest(new Point2D(0.7, 2)));
+        System.out.println(kdTree.nearest(new Point2D(-1, -1)));
+
 
     }                 // unit testing of the methods (optional)
 }
