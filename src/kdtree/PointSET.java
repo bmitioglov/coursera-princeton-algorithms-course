@@ -50,7 +50,7 @@ public class PointSET {
         double min = Integer.MAX_VALUE;
         Point2D minPoint = null;
         for (Point2D currentPoint: pointSet) {
-            double distance = currentPoint.distanceTo(p);
+            double distance = currentPoint.distanceSquaredTo(p);
             if (distance < min) {
                 min = distance;
                 minPoint = currentPoint;
