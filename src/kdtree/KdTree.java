@@ -41,6 +41,7 @@ public class KdTree {
     }                       // number of points in the set
 
     public void insert(Point2D p)  {
+        if (p == null) throw new IllegalArgumentException("Point is null");
         if (size == 0) {
             tree = new Node(p, Alignment.Vertical);
             size++;
@@ -93,7 +94,6 @@ public class KdTree {
     }         // does the set contain point p?
 
     private boolean find(Node tree, Point2D point) {
-//        System.out.println("Checking point = " + tree.point);
         if (tree.point.equals(point)) return true;
         if (tree.alignment == Alignment.Vertical) {
             if (point.x() < tree.point.x()) {
@@ -240,7 +240,6 @@ public class KdTree {
                     return pointsInRange;
                 }
             } else {
-//                System.out.println("wrong...");
                 return Collections.emptyList();
             }
         }
@@ -257,8 +256,6 @@ public class KdTree {
     private Point2D findNearest(Node tree, Point2D point, Point2D currentChampion) {
         if (tree == null) return currentChampion;
 
-//        System.out.println("Checking point = " + tree.point + ", current champion = " + currentChampion);
-
         if (point.distanceSquaredTo(tree.point) < point.distanceSquaredTo(currentChampion)) {
             currentChampion = tree.point;
         }
@@ -274,7 +271,6 @@ public class KdTree {
                     } else {
                         return findNearest(tree.right, point, currentChampion);
                     }
-//                    return currentChampion;
                 } else {
                     return findNearest(tree.right, point, currentChampion);
                 }
@@ -288,7 +284,6 @@ public class KdTree {
                     } else {
                         return findNearest(tree.left, point, currentChampion);
                     }
-//                    return currentChampion;
                 } else {
                     return findNearest(tree.left, point, currentChampion);
                 }
@@ -299,12 +294,11 @@ public class KdTree {
                 if (point.distanceSquaredTo(championInLeftBranch) < point.distanceSquaredTo(currentChampion)) {
                     currentChampion = championInLeftBranch;
 
-                    if (point.distanceSquaredTo(championInLeftBranch) < point.distanceSquaredTo(new Point2D(tree.point.y(), point.x()))) {
+                    if (point.distanceSquaredTo(championInLeftBranch) < point.distanceSquaredTo(new Point2D(point.x(), tree.point.y()))) {
                         return currentChampion;
                     } else {
                         return findNearest(tree.right, point, currentChampion);
                     }
-//                    return currentChampion;
                 } else {
                     return findNearest(tree.right, point, currentChampion);
                 }
@@ -313,12 +307,11 @@ public class KdTree {
                 if (point.distanceSquaredTo(championInRightBranch) < point.distanceSquaredTo(currentChampion)) {
                     currentChampion = championInRightBranch;
 
-                    if (point.distanceSquaredTo(championInRightBranch) < point.distanceSquaredTo(new Point2D(tree.point.y(), point.x()))) {
+                    if (point.distanceSquaredTo(championInRightBranch) < point.distanceSquaredTo(new Point2D(point.x(), tree.point.y()))) {
                         return currentChampion;
                     } else {
                         return findNearest(tree.left, point, currentChampion);
                     }
-//                    return currentChampion;
                 } else {
                     return findNearest(tree.left, point, currentChampion);
                 }
@@ -328,18 +321,11 @@ public class KdTree {
 
     public static void main(String[] args) {
         KdTree kdTree = new KdTree();
-        kdTree.insert(new Point2D(1, 1));
-        kdTree.insert(new Point2D(1, 2));
-        kdTree.insert(new Point2D(2, 2));
-        kdTree.insert(new Point2D(0, 1));
-        kdTree.insert(new Point2D(0, 0));
-        kdTree.insert(new Point2D(-1, 0));
-        kdTree.insert(new Point2D(0, 2));
-//        System.out.println(kdTree.contains(new Point2D(2, 2)));
-//        System.out.println(kdTree.range(new RectHV(1, 0, 2, 2)));
-        System.out.println(kdTree.nearest(new Point2D(0.7, 2)));
-        System.out.println(kdTree.nearest(new Point2D(-1, -1)));
-
-
+        kdTree.insert(new Point2D(0.7, 0.2));
+        kdTree.insert(new Point2D(0.5, 0.4));
+        kdTree.insert(new Point2D(0.2, 0.3));
+        kdTree.insert(new Point2D(0.4, 0.7));
+        kdTree.insert(new Point2D(0.9, 0.6));
+        System.out.println(kdTree.nearest(new Point2D(0.085, 0.431)));
     }                 // unit testing of the methods (optional)
 }
