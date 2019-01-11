@@ -10,7 +10,7 @@ import java.util.TreeSet;
 
 public class PointSET {
 
-    public TreeSet<Point2D> pointSet;
+    private TreeSet<Point2D> pointSet;
 
     public         PointSET(){
         pointSet = new TreeSet<>();

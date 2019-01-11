@@ -50,6 +50,7 @@ public class KdTree {
     }            // add the point to the set (if it is not already in the set)
 
     private void insertInKdTree(Node tree, Point2D point) {
+        if (tree.point.equals(point)) return;
         if (tree.alignment == Alignment.Vertical) {
             if (point.x() < tree.point.x()) {
                 if (tree.left == null) {
@@ -92,7 +93,7 @@ public class KdTree {
     }         // does the set contain point p?
 
     private boolean find(Node tree, Point2D point) {
-        System.out.println("Checking point = " + tree.point);
+//        System.out.println("Checking point = " + tree.point);
         if (tree.point.equals(point)) return true;
         if (tree.alignment == Alignment.Vertical) {
             if (point.x() < tree.point.x()) {
@@ -218,7 +219,7 @@ public class KdTree {
                     return pointsInRange;
                 }
             } else {
-                System.out.println("wrong...");
+//                System.out.println("wrong...");
                 return Collections.emptyList();
             }
         } else {
@@ -241,7 +242,7 @@ public class KdTree {
                     return pointsInRange;
                 }
             } else {
-                System.out.println("wrong...");
+//                System.out.println("wrong...");
                 return Collections.emptyList();
             }
         }
@@ -258,7 +259,7 @@ public class KdTree {
     private Point2D findNearest(Node tree, Point2D point, Point2D currentChampion) {
         if (tree == null) return currentChampion;
 
-        System.out.println("Checking point = " + tree.point + ", current champion = " + currentChampion);
+//        System.out.println("Checking point = " + tree.point + ", current champion = " + currentChampion);
 
         if (point.distanceTo(tree.point) < point.distanceTo(currentChampion)) {
             currentChampion = tree.point;
